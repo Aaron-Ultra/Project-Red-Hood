@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART SCAN // EW Frequency Surveillance Workstation</title>
+  <meta name="description" content="Projector-Optimized Smart Scan Strategy Workstation UI for Electronic Warfare Frequency Surveillance. Designed for clarity, high contrast, and UCB1 algorithm transparency.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ==========================================================================
+         1. HEADER SECTION
+         ========================================================================== -->
+    <header class="header-card">
+      <div class="header-brand">
+        <div class="header-title-row">
+          <h1 class="header-title" id="app-title">SMART SCAN</h1>
+          <span class="header-tag">EW WORKSTATION</span>
+        </div>
+        <p class="header-subtitle">Electronic Warfare Frequency Surveillance & Smart Scan Strategy</p>
+      </div>
+
+      <div class="header-metadata">
+        <div class="meta-pill status-online">
+          <span class="meta-label">STATUS</span>
+          <span class="meta-val" id="sys-status">SYSTEM ONLINE</span>
+        </div>
+        <div class="meta-pill">
+          <span class="meta-label">SESSION</span>
+          <span class="meta-val" id="sys-session">#1042</span>
+        </div>
+        <div class="meta-pill">
+          <span class="meta-label">LAST UPDATE</span>
+          <span class="meta-val" id="sys-time">18:03:52</span>
+        </div>
+        <div class="meta-pill">
+          <span class="meta-label">BACKEND</span>
+          <span class="meta-val" id="sys-source">MOCK DATA</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn-projector-toggle" id="btn-toggle-projector" title="Toggle Grayscale High Contrast Mode for Washed-Out Projectors">
+          <span>📽️ PROJECTOR TEST MODE</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="nav-tabs" role="tablist" aria-label="Workstation View Navigation">
+      <button class="nav-tab-btn active" id="tab-workstation-btn" data-tab="workstation" role="tab" aria-selected="true">
+        🖥️ WORKSTATION (MAIN)
+      </button>
+      <button class="nav-tab-btn" id="tab-history-btn" data-tab="history" role="tab" aria-selected="false">
+        📜 SCAN HISTORY
+      </button>
+      <button class="nav-tab-btn" id="tab-performance-btn" data-tab="performance" role="tab" aria-selected="false">
+        📊 PERFORMANCE METRICS
+      </button>
+      <button class="nav-tab-btn" id="tab-integration-btn" data-tab="integration" role="tab" aria-selected="false">
+        🔗 BACKEND INTEGRATION GUIDE
+      </button>
+    </nav>
+
+    <!-- ==========================================================================
+         TAB 1: MAIN WORKSTATION DASHBOARD
+         ========================================================================== -->
+    <main id="tab-workstation" class="tab-content-panel active" role="tabpanel">
+
+      <!-- 2. FREQUENCY SPECTRUM (HERO COMPONENT) -->
+      <section class="spectrum-card" aria-label="Frequency Spectrum Visualization">
+        <div class="spectrum-header-row">
+          <h2 class="section-title">FREQUENCY SPECTRUM SURVEILLANCE</h2>
+          
+          <div class="spectrum-legend">
+            <div class="legend-item">
+              <span class="legend-swatch swatch-current"></span>
+              <span>CURRENT SCAN</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch swatch-next"></span>
+              <span>NEXT TARGET</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch swatch-detected"></span>
+              <span>SIGNAL DETECTED</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="spectrum-container">
+          <div class="spectrum-axis">
+            <span>1.0 GHz</span>
+            <span>2.0 GHz</span>
+            <span>3.0 GHz</span>
+            <span>4.0 GHz</span>
+            <span>5.0 GHz</span>
+            <span>6.0 GHz</span>
+          </div>
+
+          <div class="spectrum-grid" id="spectrum-grid-container">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 3-COLUMN GRID: OBSERVATION, UCB1 DECISION, WHY THIS BAND -->
+      <div class="dashboard-grid-3">
+
+        <!-- 3. CURRENT OBSERVATION PANEL -->
+        <section class="panel-card" aria-label="Current Band Observation Data">
+          <h2 class="section-title">CURRENT OBSERVATION</h2>
+
+          <div class="observation-grid">
+            <div class="obs-item">
+              <span class="obs-label">TARGET FREQUENCY</span>
+              <span class="obs-value" id="obs-freq">2.40 GHz</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">SIGNAL STRENGTH</span>
+              <span class="obs-value" id="obs-signal">-48 dBm</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">BANDWIDTH</span>
+              <span class="obs-value" id="obs-bw">20 MHz</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">SIGNAL STATUS</span>
+              <div id="obs-status-container">
+                <span class="status-badge detected" id="obs-status">● DETECTED</span>
+              </div>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">ANOMALY SCORE</span>
+              <span class="obs-value" id="obs-anomaly">0.78</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">OBSERVATIONS</span>
+              <span class="obs-value" id="obs-count">23</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4 & 5. UCB1 DECISION & EXPLORATION SCALE -->
+        <section class="panel-card" aria-label="UCB1 Algorithm Decision">
+          <h2 class="section-title">UCB1 DECISION</h2>
+
+          <div class="ucb1-hero-badge exploit" id="ucb1-hero-badge">
+            <span class="ucb1-title">CURRENT ALGORITHM CHOICE</span>
+            <span class="ucb1-decision-text" id="ucb1-decision-text">⚡ EXPLOIT</span>
+          </div>
+
+          <div class="ucb1-metrics-row">
+            <div class="obs-item">
+              <span class="obs-label">UCB1 SCORE</span>
+              <span class="obs-value" id="ucb1-score">0.91</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">PRIORITY RANK</span>
+              <span class="obs-value" id="ucb1-priority">#2</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">CURRENT REWARD</span>
+              <span class="obs-value" id="ucb1-reward">0.84</span>
+            </div>
+
+            <div class="obs-item">
+              <span class="obs-label">AVG REWARD</span>
+              <span class="obs-value" id="ucb1-avg-reward">0.79</span>
+            </div>
+          </div>
+
+          <!-- EXPLORATION VS EXPLOITATION SCALE -->
+          <div class="exp-scale-card">
+            <div class="exp-scale-labels">
+              <span>🔍 EXPLORE</span>
+              <span>⚡ EXPLOIT</span>
+            </div>
+            <div class="exp-scale-track">
+              <div class="exp-scale-pin" id="exp-scale-pin" style="left: 75%;" title="Exploitation Stance"></div>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--text-secondary); text-align: center;">
+              ALGORITHM STANCE: <strong id="exp-stance-text" style="color: var(--text-primary);">EXPLOITATION HEAVY</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. WHY THIS BAND? RATIONALE -->
+        <section class="panel-card" aria-label="Algorithmic Decision Explanation">
+          <h2 class="section-title">WHY THIS BAND?</h2>
+
+          <div class="why-box">
+            <div class="why-header">
+              <span>🧠</span>
+              <span>HUMAN-UNDERSTANDABLE REASON</span>
+            </div>
+            <p class="why-text" id="why-text">
+              "Band B05 was selected because it has consistently produced a high average reward (0.79) over 23 observations."
+            </p>
+          </div>
+
+          <div class="scenario-selector mt-2">
+            <label for="scenario-select">PRESENTATION DEMO SCENARIOS:</label>
+            <select id="scenario-select" class="scenario-select-input">
+              <option value="high_reward_exploit">Scenario 1: High Reward Exploit (B05)</option>
+              <option value="high_anomaly">Scenario 2: Critical Anomaly Exploration (B12)</option>
+              <option value="dense_rf">Scenario 3: Dense RF Environment</option>
+            </select>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- 7. CURRENT -> NEXT BAND WORKFLOW -->
+      <section class="workflow-card" aria-label="Scan Strategy Transition & Execution">
+        <div class="workflow-transition-group">
+          <div class="workflow-band-block current">
+            <span class="wf-label">CURRENT BAND</span>
+            <span class="wf-band-id" id="wf-current-id">B05</span>
+            <span class="wf-freq" id="wf-current-freq">2.40 GHz</span>
+          </div>
+
+          <span class="wf-arrow">➔</span>
+
+          <div class="workflow-band-block next">
+            <span class="wf-label">NEXT TARGET</span>
+            <span class="wf-band-id" id="wf-next-id">B12</span>
+            <span class="wf-freq" id="wf-next-freq">4.85 GHz</span>
+          </div>
+        </div>
+
+        <div class="workflow-controls">
+          <button type="button" class="btn-scan-next" id="btn-scan-next">
+            <span>⚡ SCAN NEXT</span>
+          </button>
+          <button type="button" class="btn-auto-scan" id="btn-auto-scan">
+            <span>▶️ AUTO-SCAN: OFF</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 8. BAND PRIORITY TABLE -->
+      <section class="table-card" aria-label="Band Priority Ranking Table">
+        <h2 class="section-title">BAND PRIORITY RANKING TABLE</h2>
+        <table class="band-table" id="priority-table">
+          <thead>
+            <tr>
+              <th>RANK</th>
+              <th>BAND</th>
+              <th>FREQUENCY</th>
+              <th>SIGNAL STRENGTH</th>
+              <th>OBSERVATIONS</th>
+              <th>AVG REWARD</th>
+              <th>UCB1 SCORE</th>
+              <th>DECISION</th>
+            </tr>
+          </thead>
+          <tbody id="priority-table-body">
+            <!-- Rendered dynamically by app.js -->
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+
+    <!-- ==========================================================================
+         TAB 2: SCAN HISTORY
+         ========================================================================== -->
+    <section id="tab-history" class="tab-content-panel" role="tabpanel">
+      <div class="table-card">
+        <h2 class="section-title">SURVEILLANCE SCAN HISTORY LOG</h2>
+        <table class="band-table">
+          <thead>
+            <tr>
+              <th>STEP #</th>
+              <th>TIMESTAMP</th>
+              <th>BAND</th>
+              <th>FREQUENCY</th>
+              <th>SIGNAL</th>
+              <th>DECISION</th>
+              <th>REWARD</th>
+              <th>UCB1 SCORE</th>
+              <th>ANOMALY STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Rendered dynamically by app.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         TAB 3: PERFORMANCE METRICS
+         ========================================================================== -->
+    <section id="tab-performance" class="tab-content-panel" role="tabpanel">
+      <div class="perf-grid">
+        <div class="perf-card">
+          <span class="perf-metric-name">DETECTION LATENCY</span>
+          <span class="perf-metric-value" id="perf-latency">14 ms</span>
+          <span class="perf-metric-sub">Mean response time per frequency hop</span>
+        </div>
+
+        <div class="perf-card">
+          <span class="perf-metric-name">PROBABILITY OF DETECTION (P_d)</span>
+          <span class="perf-metric-value" id="perf-pd">96.4%</span>
+          <span class="perf-metric-sub">Target signal capture accuracy</span>
+        </div>
+
+        <div class="perf-card">
+          <span class="perf-metric-name">PROBABILITY OF FALSE ALARM (P_fa)</span>
+          <span class="perf-metric-value" id="perf-pfa">1.2%</span>
+          <span class="perf-metric-sub">Spurious noise classification rate</span>
+        </div>
+
+        <div class="perf-card">
+          <span class="perf-metric-name">INTERCEPT RATE</span>
+          <span class="perf-metric-value" id="perf-intercept">45.2 /s</span>
+          <span class="perf-metric-sub">Frequency sweeps executed per second</span>
+        </div>
+
+        <div class="perf-card">
+          <span class="perf-metric-name">AVERAGE REWARD</span>
+          <span class="perf-metric-value" id="perf-avg-reward">0.82</span>
+          <span class="perf-metric-sub">Cumulative UCB1 algorithm score</span>
+        </div>
+
+        <div class="perf-card">
+          <span class="perf-metric-name">SCANNING EFFICIENCY</span>
+          <span class="perf-metric-value" id="perf-efficiency">91.8%</span>
+          <span class="perf-metric-sub">Optimized spectrum coverage vs random scan</span>
+        </div>
+      </div>
+
+      <!-- VISUAL BAR CHART FOR PROJECTOR READABILITY -->
+      <div class="chart-container">
+        <h3 class="chart-title">BAND EXPLORATION VS EXPLOITATION DISTRIBUTION</h3>
+        <div class="chart-bars">
+          <div class="chart-bar-group">
+            <div class="chart-bar-fill accent" style="height: 140px;" title="Exploit Scans: 62.7%"></div>
+            <span class="chart-bar-label">EXPLOIT (63%)</span>
+          </div>
+          <div class="chart-bar-group">
+            <div class="chart-bar-fill" style="height: 80px;" title="Explore Scans: 37.3%"></div>
+            <span class="chart-bar-label">EXPLORE (37%)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         TAB 4: BACKEND INTEGRATION GUIDE
+         ========================================================================== -->
+    <section id="tab-integration" class="tab-content-panel" role="tabpanel">
+      <div class="integration-card">
+        <h2 class="section-title">BACKEND & UCB1 ALGORITHM INTEGRATION BRIDGE</h2>
+        
+        <p style="font-size: 18px; font-weight: 700; color: var(--text-primary);">
+          This frontend UI is 100% decoupled from the backend. The backend developer needs to update <code>mockData.js</code> or emit standard JSON objects matching the schema below.
+        </p>
+
+        <h3 style="font-size: 20px; font-weight: 800; margin-top: 12px;">EXPECTED JSON API RESPONSE CONTRACT</h3>
+        
+        <pre class="code-block">{
+  "bandId": "B05",
+  "frequency": 2.40,
+  "signalStrength": -48,
+  "bandwidth": 20,
+  "status": "DETECTED",        // "DETECTED", "CLEAR", "ANOMALY", "INTERFERENCE"
+  "anomalyScore": 0.78,
+  "observations": 23,
+  "reward": 0.84,
+  "averageReward": 0.79,
+  "ucb1Score": 0.91,
+  "priority": 2,
+  "decision": "EXPLOIT",       // "EXPLOIT" or "EXPLORE"
+  "decisionReason": "High historical average reward",
+  "nextBand": "B12"
+}</pre>
+
+        <h3 style="font-size: 20px; font-weight: 800; margin-top: 12px;">HOW TO REPLACE MOCK DATA WITH LIVE API</h3>
+        <ol style="font-size: 18px; font-weight: 700; margin-left: 24px; display: flex; flex-direction: column; gap: 8px;">
+          <li>In <code>mockData.js</code>, replace <code>triggerNextScan()</code> with a <code>fetch('http://localhost:5000/api/scan/next', { method: 'POST' })</code> call.</li>
+          <li>Or set up a WebSocket connection: <code>const ws = new WebSocket('ws://localhost:5000/ws/spectrum');</code></li>
+          <li>Call <code>window.mockData.notifyListeners()</code> whenever new backend data arrives. The entire UI will re-render automatically!</li>
+        </ol>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="mockData.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
