@@ -378,51 +378,55 @@ class MockDataStore {
    * Advance to the next scanning target step.
    * Simulates real-time spectrum feedback & UCB1 re-evaluation.
    */
-  triggerNextScan() {
-    this.scanStepCount++;
-    // Move current to next
-    const prevCurrent = this.currentBandId;
-    this.currentBandId = this.nextBandId;
+  async triggerNextScan() {
+    try {
+      const response = await fetch('http://localhost:5000/api/scan/next', { method: 'POST' });
+      if (!response.ok) throw new Error('API Error');
+      const data = await response.json();
+      
+      this.scanStepCount++;
+      
+      // The API tells us what band it just scanned
+      this.currentBandId = data.bandId;
+      
+      const currBandObj = this.getBandById(this.currentBandId);
+      if (currBandObj) {
+        currBandObj.observations = data.observations;
+        currBandObj.signalStrength = data.signalStrength;
+        currBandObj.reward = data.reward;
+        currBandObj.averageReward = data.averageReward;
+        currBandObj.status = data.status;
+        currBandObj.anomalyScore = data.anomalyScore;
+        currBandObj.ucb1Score = data.ucb1Score;
+        currBandObj.priority = data.priority;
+        currBandObj.decision = data.decision;
+        currBandObj.decisionReason = data.decisionReason;
+      }
+      
+      this.nextBandId = data.nextBand || "B01";
+      this.selectedBandId = this.currentBandId;
+      
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      
+      this.historyLog.unshift({
+        step: this.scanStepCount,
+        timestamp: timeStr,
+        bandId: data.bandId,
+        frequency: `${data.frequency.toFixed(2)} GHz`,
+        signal: `${data.signalStrength} dBm`,
+        decision: data.decision,
+        reward: data.reward,
+        ucb1: data.ucb1Score,
+        anomaly: data.status === "ANOMALY" ? "ANOMALY DETECTED" : data.status
+      });
 
-    const currBandObj = this.getBandById(this.currentBandId);
-    if (currBandObj) {
-      currBandObj.observations += 1;
-      // Slight variation in signal strength and reward simulation
-      const noise = (Math.random() * 4 - 2);
-      currBandObj.signalStrength = Math.min(-30, Math.max(-95, Math.round(currBandObj.signalStrength + noise)));
-      currBandObj.reward = Math.min(0.99, Math.max(0.05, +(currBandObj.reward + (Math.random() * 0.06 - 0.03)).toFixed(2)));
-      currBandObj.averageReward = +((currBandObj.averageReward * 0.9 + currBandObj.reward * 0.1)).toFixed(2);
+      if (this.historyLog.length > 50) this.historyLog.pop();
+
+      this.notifyListeners();
+    } catch (e) {
+      console.error("Failed to fetch from API:", e);
     }
-
-    // Pick a new next target band based on UCB1 scores (highest other than current)
-    const candidates = this.bands.filter(b => b.bandId !== this.currentBandId);
-    // Shuffle slightly or pick top candidate
-    candidates.sort((a, b) => (b.ucb1Score + (Math.random() * 0.08)) - (a.ucb1Score + (Math.random() * 0.08)));
-    this.nextBandId = candidates[0].bandId;
-
-    // Selected band updates to current
-    this.selectedBandId = this.currentBandId;
-
-    // Add entry to history log
-    const now = new Date();
-    const timeStr = now.toTimeString().split(' ')[0];
-    const newCurr = this.getBandById(this.currentBandId);
-
-    this.historyLog.unshift({
-      step: this.scanStepCount,
-      timestamp: timeStr,
-      bandId: newCurr.bandId,
-      frequency: `${newCurr.frequency.toFixed(2)} GHz`,
-      signal: `${newCurr.signalStrength} dBm`,
-      decision: newCurr.decision,
-      reward: newCurr.reward,
-      ucb1: newCurr.ucb1Score,
-      anomaly: newCurr.status === "ANOMALY" ? "ANOMALY DETECTED" : newCurr.status
-    });
-
-    if (this.historyLog.length > 50) this.historyLog.pop();
-
-    this.notifyListeners();
   }
 
   toggleAutoScan() {
